@@ -54,10 +54,10 @@ class HarborDataset(torch.utils.data.Dataset):
         thermal = cv2.imread(image_path)
         self.image_h, self.image_w, _ = thermal.shape
         thermal = thermal[:,:,0]
-        return thermal
+        return thermal, image_path
 
     def __getitem__(self, idx):
-        img = self.load_image(self.image_list[idx])
+        img, path = self.load_image(self.image_list[idx])
         # warped roi to square
         img = cv2.warpPerspective(img, self.M, (self.w_max, self.h_max))
         img = cv2.resize(img, self.crop_size, interpolation=cv2.INTER_LINEAR)
@@ -65,7 +65,7 @@ class HarborDataset(torch.utils.data.Dataset):
         img = torch.from_numpy(img)
         img = img.float()
         img = torch.unsqueeze(img, 0) # (HxW -> CxHxW)
-        return img
+        return img, path
 
     def __len__(self):
         return len(self.image_list)
