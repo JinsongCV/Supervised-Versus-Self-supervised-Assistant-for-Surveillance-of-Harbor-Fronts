@@ -3,31 +3,49 @@
 This repo lets you train a basic autoencoder and use it for anormaly detection.
 
 ### Overview ###
-* define_crop_region.py place the corner boxes of the ROI
-* extract_datasets.py extracts crops from a specific view point.
-* train.py trains and tests a model using the extracted crops.
-* embed.py lets load a model and output embeddings of the extracted crops.
-* plot_distribution.py
+* experiments.py configure the fundamentals here and use this script to execute train.py, test.py and evaluate.py
+* train.py trains a model using.
+* test.py produces MSE loss, reconstruction etc. for each sample and saves as npy
+* evaluate.py computes metrics, plots and find a decision threshold.
+* src/autoencoder.py pytorch lightning style autoencoder model
+* src/model.py encoder and decoder definition 
+* data/harbour_datamodule.py loades .jpg from folders
 
 ### prepare data ###
+Place jpg images in subfolders in the data/ directory and make sure to specify the folder path in the cfg dictionary in e.g. experiments.py
 
-There are two options. (1) using prepared data(crops) as done for the "Supervised Versus Self-supervised Assistant for Surveillance of Harbor Fronts" paper or (2) extract specific views and crops using "extract_datasets.py".
+### Results for different configurations of training and test data ###
 
-To use pre-cropped data simply place the image files in data/[test,train].
+precision = tp / (tp+fp) 
+recall = tp / (tp+fn)
+F1 = 2 * (precision * recall) / (precision + recall)
 
-In you want to use "extract_datasets.py":
+% trained on normal, results on test (easy)
+threshold: 0.0011759361950680614 (from training set)
+tn 409, fp 0, fn 5, tp 74
+F1: 0.967, recall: 0.937, precision: 1.000
 
-* Choose view point "view" variable and determine whether the other options are correct.
-* Set flow=False if you want just the [intensity] otherwise crops are stored containing [intensity, flow_x, flow_y].
+% trained on normal and abnormal, results on test (easy)
+threshold: 0.0006402939325198531 (from training set)
+tn 385, fp 24, fn 1, tp 78
+F1: 0.862, recall: 0.987, precision: 0.765
 
-### train ###
+% trained on normal and cleaned abnormal, results on test (easy)
+threshold: 0.0005544883315451443 (from training set)
+tn 372, fp 37, fn 2, tp 77
+F1: 0.798, recall: 0.975, precision: 0.675
 
-* train mode, no surprises.
+% trained on normal, results on test (difficult)
+threshold: 0.0005973399383947253 (from training set)
+tn 388, fp 21, fn 9, tp 82
+F1: 0.845, recall: 0.901, precision: 0.796
 
-### embed ###
+% trained on normal and abnormal, results on test (difficult)
+threshold: 0.0005854243063367903 (from training set)
+tn 369, fp 40, fn 9, tp 82
+F1: 0.770, recall: 0.901, precision: 0.672
 
-* produces reconstructions, reconstruction losses, and latent representation and stores it as .npy.
-
-### plot_distribution ###
-
-* Loads numpy arrays from the .npy file, fits PCA to latent representation vectors, and visualizes the distribution in 2D using the two most significant components.
+% trained on normal and cleaned abnormal, results on test (difficult)
+threshold: 0.0005544883315451443 (from training set)
+tn 372, fp 37, fn 10, tp 81
+F1: 0.775, recall: 0.890, precision: 0.686
