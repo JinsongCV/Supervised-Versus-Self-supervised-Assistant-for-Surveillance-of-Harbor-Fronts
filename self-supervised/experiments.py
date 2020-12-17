@@ -3,9 +3,9 @@ from test import test
 from evaluate import evaluate
 
 if __name__ == "__main__":
-    groupings = ['normal','abnormal']
-    #groupings = ['normal','entering','abnormal']
-    '''
+    #groupings = ['normal','abnormal']
+    groupings = ['normal','entering','abnormal']
+
     cfg = {
            'experiment': 'normal',
            'train_folder': 'data/train1715/normal/',
@@ -24,13 +24,13 @@ if __name__ == "__main__":
           }
 
     #train(cfg)
-    test(cfg,dataset='test', groupings=groupings)
+    test(cfg,dataset='test',groupings=groupings,save=False)
     test(cfg,dataset='val', groupings=groupings)
     cfg['train_folder'] = 'data/train1715/'
     test(cfg,dataset='train', groupings=groupings)
     th = evaluate(cfg, dataset='train', groupings=groupings) # find a suitable threshold using training set
     evaluate(cfg, dataset='test', threshold=th, groupings=groupings)
-    '''
+
 
     cfg = {
            'experiment': 'all',
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     test(cfg,dataset='train', groupings=groupings)
     th = evaluate(cfg, dataset='train', groupings=groupings)
     evaluate(cfg, dataset='test', threshold=th, groupings=groupings)
+
 
     '''
     #

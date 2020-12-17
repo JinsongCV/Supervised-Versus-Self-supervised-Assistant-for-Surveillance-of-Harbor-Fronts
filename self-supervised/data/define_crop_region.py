@@ -107,9 +107,9 @@ def label_frame(txt_file, frame, scale=1.0):
 
         if mouse.l_count > 1 and mouse.m_count > 1:
             tmp = cv2.line(tmp, tuple(mouse.l[0]), tuple(mouse.m[0]), (0,0,255), 2)
-            tmp = cv2.line(tmp, tuple(mouse.m[0]), tuple(mouse.m[1]), (0,0,255), 3) 
-            tmp = cv2.line(tmp, tuple(mouse.m[1]), tuple(mouse.l[1]), (0,0,255), 2) 
-            tmp = cv2.line(tmp, tuple(mouse.l[1]), tuple(mouse.l[0]), (0,0,255), 2) 
+            tmp = cv2.line(tmp, tuple(mouse.m[0]), tuple(mouse.m[1]), (0,0,255), 3)
+            tmp = cv2.line(tmp, tuple(mouse.m[1]), tuple(mouse.l[1]), (0,0,255), 2)
+            tmp = cv2.line(tmp, tuple(mouse.l[1]), tuple(mouse.l[0]), (0,0,255), 2)
             #print("mouse.l[0]: {}, mouse.l[1]: {}".format(mouse.l[0],mouse.l[1]))
 
             pts = np.array([mouse.l[0],mouse.m[0],mouse.m[1],mouse.l[1]])
@@ -124,14 +124,15 @@ def label_frame(txt_file, frame, scale=1.0):
         if k == 27:
             file = open(txt_file, "w")
             if mouse.l_count > 1 and mouse.m_count > 1:
+                file.write("tl,tr,br,bl\n")
                 x,y = mouse.l[0]
-                file.write("tl:{},{};".format(int(x//scale),int(y//scale)))
+                file.write("{},{}\n".format(int(x//scale),int(y//scale)))
                 x,y = mouse.m[0]
-                file.write("tr:{},{};".format(int(x//scale),int(y//scale)))
+                file.write("{},{}\n".format(int(x//scale),int(y//scale)))
                 x,y = mouse.m[1]
-                file.write("br:{},{};".format(int(x//scale),int(y//scale)))
+                file.write("{},{}\n".format(int(x//scale),int(y//scale)))
                 x,y = mouse.l[1]
-                file.write("bl:{},{};".format(int(x//scale),int(y//scale)))
+                file.write("{},{}".format(int(x//scale),int(y//scale)))
                 #line_l = points2line([mouse.m[0]/width, mouse.m[1]/height],
                 #                     [mouse.l[0]/width, mouse.l[1]/height])
                 #line_r = points2line([mouse.m[0]/width, mouse.m[1]/height],

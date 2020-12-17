@@ -48,7 +48,9 @@ class HarborDataset(torch.utils.data.Dataset):
             print("did not find any files")
 
         # points from data/roi.txt
-        self.M, self.w_max, self.h_max = four_point_transform(tl=[52,108], tr=[67,108], br=[170,265], bl=[112,270])
+        #print(open("data/roi.txt", 'r').readline())
+        roi = np.loadtxt("data/roi.txt", delimiter=",", skiprows=1, dtype=int)
+        self.M, self.w_max, self.h_max = four_point_transform(tl=roi[0], tr=roi[1], br=roi[2], bl=roi[3])
 
     def load_image(self, image_path):
         thermal = cv2.imread(image_path)

@@ -1,3 +1,3 @@
-threshold: 0.0006402939325198531
-tn 385, fp 24, fn 1, tp 78
-recall: 0.987, precision: 0.765
+threshold: 0.0005854243063367903
+tn 369, fp 40, fn 9, tp 82
+F1: 0.770, recall: 0.901, precision: 0.672

@@ -47,7 +47,8 @@ def evaluate(cfg, dataset='test', groupings=['normal','abnormal'], threshold=0.0
         if 'abnormal' in group:
             plt.plot(x,loss,'.',color='r', label='Abnormal')
         elif 'entering' in group:
-            plt.plot(x,loss,'.',color='y', label='entering')
+            plt.plot(x,loss,'.',color='y', label='Entering')
+            #plt.plot(x,loss,'.',color='r')
         else:
             plt.plot(x,loss,'.',color='g', label='Normal')
 
@@ -81,7 +82,8 @@ def evaluate(cfg, dataset='test', groupings=['normal','abnormal'], threshold=0.0
     res = "tn {}, fp {}, fn {}, tp {}\n".format(tn, fp, fn, tp)
     precision = tp / (tp+fp)
     recall = tp / (tp+fn)
-    pr = "recall: {:.3f}, precision: {:.3f}".format(recall,precision)
+    F1 = 2 * (precision * recall) / (precision + recall)
+    pr = "F1: {:.3f}, recall: {:.3f}, precision: {:.3f}".format(F1,recall,precision)
     file = open(os.path.join(experiment_dir,'results.txt'),"w")
     file.write("threshold: {}\n".format(threshold))
     file.write(res)
@@ -116,6 +118,7 @@ def evaluate(cfg, dataset='test', groupings=['normal','abnormal'], threshold=0.0
     # Find threshold based on optimal F1
     F1 = 2 * (precision * recall) / (precision + recall)
     idx = F1.argmax()
+    print("optimal F1 score {}".format(F1[idx]))
     '''
     # Find threshold based on a desired recall
     desired_recall = 0.8

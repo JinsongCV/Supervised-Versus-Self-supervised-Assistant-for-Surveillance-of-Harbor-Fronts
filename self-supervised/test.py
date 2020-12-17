@@ -26,6 +26,10 @@ def test(cfg, dataset='test', groupings=['normal','abnormal'], show=False, save=
     experiment_dir = os.path.join("experiments/",cfg['experiment'],dataset)
     if not os.path.exists(experiment_dir):
         os.makedirs(experiment_dir)
+    if save:
+        image_dir = os.path.join(experiment_dir,"imgs/")
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
 
     sys.path.append('data/')
     from harbour_dataset import HarborDataset
@@ -38,8 +42,9 @@ def test(cfg, dataset='test', groupings=['normal','abnormal'], show=False, save=
         elif dataset == 'test':
             data = HarborDataset(img_dir=os.path.join(cfg['test_folder'],group))
 
-        if save or show:
-            img_h, img_w = data[0].shape[1:3]
+        if show:
+            img, path = data[0]
+            img_h, img_w = img.shape[1:3]
             scale = 2
             # Create a plotter class object
             from plotter import Plotter
@@ -62,20 +67,22 @@ def test(cfg, dataset='test', groupings=['normal','abnormal'], show=False, save=
             recs.append(rec)
             losses.append(loss.item())
 
-            if save or show:
+
+            if save:
+                l = "{:.6f}".format(losses[-1])[-6:]
+                #cv2.imwrite(os.path.join(image_dir,"{}_l-{}.png".format(str(i).zfill(5),l)),vis)
+                cv2.imwrite(os.path.join(image_dir,os.path.basename(path)),input)
+
+            if show:
                 vis = np.concatenate((input, rec), axis=0)
                 vis = cv2.resize(vis, (vis.shape[1]*scale,vis.shape[0]*scale), interpolation = cv2.INTER_NEAREST)
                 plot.plot(loss*100000)
                 output = np.concatenate((cv2.merge((vis,vis,vis)), plot.plot_canvas), axis=1)
                 output = cv2.putText(output, str(i).zfill(4), (4,16), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 1, cv2.LINE_AA)
-                #if save:
-                    #l = "{:.6f}".format(losses[-1])[-6:]
-                    #cv2.imwrite(os.path.join(experiment_dir,"{}_l-{}.png".format(str(i).zfill(5),l)),vis)
-                if show:
-                    cv2.imshow("test",output)
-                    key = cv2.waitKey()
-                    if key == 27:
-                        break
+                cv2.imshow("test",output)
+                key = cv2.waitKey()
+                if key == 27:
+                    break
 
         np.save(os.path.join(experiment_dir,'{}_inputs.npy'.format(group)), inputs)
         np.save(os.path.join(experiment_dir,'{}_recs.npy'.format(group)), recs)
